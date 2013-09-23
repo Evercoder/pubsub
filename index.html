@@ -8,13 +8,40 @@
 			color: #333;
 			padding: 2em 5em;
 		}
+
+		a {
+			text-decoration: none;
+			color: #c00;
+		}
 	</style>
 </head>
 <body>
 
 	<h1>Pub/Sub</h1>
 
-	<p><a href='http://github.com/danburzo/pubsub'><code>pubsub</code></a> is a small, <a href='http://jsperf.com/pubish-subscribe-performance'>fast</a> JavaScript library that implements the <a href='http://en.wikipedia.org/wiki/Publish%E2%80%93subscribe_pattern'>Publish/Subscribe pattern</a> for web applications. You can <a href='docs/pubsub.html'>read through the annotated source code</a>.<p>
+	<p><a href='http://github.com/danburzo/pubsub'><code>pubsub</code></a> is a small, fast JavaScript library that implements the <a href='http://en.wikipedia.org/wiki/Publish%E2%80%93subscribe_pattern'>Publish/Subscribe pattern</a> for web applications. You can <a href='docs/pubsub.html'>read through the annotated source code</a>.<p>
+
+	<h2>In a nutshell</h2>
+
+	<pre><code>
+var ps = new pubsub();
+
+// subscribe to an event
+ps.sub('hello', function(person) {
+	console.log('Hi, ' + person + '!');
+});
+
+// publish an event
+ps.pub('hello', 'Dan');
+	</code></pre>
+
+	<p>More features:</p>
+	<ul>
+		<li>namespaced events, e.g. <code>namespace:event</code>;</li>
+		<li>subscribe to events were triggered prior to the subscription with <code>pubsub.recoup</code>;</li>
+		<li>execute a subscribed function only once, then unsubscribe with <code>pubsub.once</code>;</li>
+		<li><a href='http://jsperf.com/pubish-subscribe-performance'>it's fast</a>.</li>
+	</ul>
 
 
 </body>
