@@ -289,9 +289,22 @@ Overwrite the implementation to create your custom namespacing rules.</p>
       events.push(str);
       <span class="keyword">return</span> events;
     }
-  };
+  };</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-11">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-11">&#182;</a>
+              </div>
+              <p>Mix public methods into <code>pubsub</code>&#39;s prototype.</p>
 
-  <span class="keyword">for</span> (<span class="keyword">var</span> i <span class="keyword">in</span> prototype) {
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>  <span class="keyword">for</span> (<span class="keyword">var</span> i <span class="keyword">in</span> prototype) {
     <span class="keyword">if</span> (prototype.hasOwnProperty(i)) {
       pubsub.prototype[i] = prototype[i];
     }
