@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+  <title>pubsub.js</title>
+  <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+  <meta name="viewport" content="width=device-width, target-densitydpi=160dpi, initial-scale=1.0; maximum-scale=1.0; user-scalable=0;">
+  <link rel="stylesheet" media="all" href="docco.css" />
+</head>
+<body>
+  <div id="container">
+    <div id="background"></div>
+    
+    <ul class="sections">
+        
+          <li id="title">
+              <div class="annotation">
+                  <h1>pubsub.js</h1>
+              </div>
+          </li>
+        
+        
+        
+        <li id="section-1">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-1">&#182;</a>
+              </div>
+              <pre><code>    pubsub (c) <span class="number">2013</span> Dan Burzo
+    pubsub can be freely distributed under the MIT license.</code></pre>
+<p>Made by <a href="https://twitter.com/danburzo">@danburzo</a>.</p>
+<p>Fork &amp; contribute at <a href="https://github.com/danburzo/pubsub">github.com/danburzo/pubsub</a>. </p>
+<p>Download <a href="https://github.com/danburzo/pubsub/zipball/master">zip</a>, <a href="https://github.com/danburzo/pubsub/tarball/master">tar</a>. </p>
+<p>The guiding principles were: speed, terseness and progressive disclosure.</p>
+<h2>Annotated API</h2>
+
+            </div>
+            
+        </li>
+        
+        
+        <li id="section-2">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-2">&#182;</a>
+              </div>
+              <p>Encapsulate the library to protect global scope.</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>(<span class="keyword">function</span>() {
+	<span class="keyword">var</span> root = <span class="keyword">this</span>;
+
+	<span class="keyword">var</span> pubsub = root.pubsub = <span class="keyword">function</span>(options) {
+		<span class="keyword">this</span>.options = options;
+		<span class="keyword">this</span>._pubsubEvents = {};
+		<span class="keyword">this</span>._pubsubHappened = {};
+	};
+
+	<span class="keyword">var</span> prototype = {</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-3">
+            <div class="annotation">
+              
+              <div class="pilwrap for-h3">
+                <a class="pilcrow" href="#section-3">&#182;</a>
+              </div>
+              <h3>pubsub.pub</h3>
+<p>Publish an event.</p>
+<ul>
+<li><strong>pub(event, [arg1, [arg2 …]])</strong><ul>
+<li><em>event</em> the event to trigger;</li>
+<li><em>arg1 … argN</em> (optional) any number of additional params to pass to the event subscribers.</li>
+</ul>
+</li>
+</ul>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>      pub: <span class="keyword">function</span>(eventString) {
+        <span class="keyword">var</span> eventComponents = <span class="keyword">this</span>.eventNamespace(eventString);
+        <span class="keyword">var</span> eventArray, i, ilen, j, jlen, args, subscriber, ret, event;
+        <span class="keyword">for</span> (i = <span class="number">0</span>, ilen = eventComponents.length; i &lt; ilen; i++) {
+          eventArray = <span class="keyword">this</span>._pubsubEvents[event = eventComponents[i]] || [];
+          args = Array.prototype.slice.call(arguments, <span class="number">1</span>);
+          <span class="keyword">for</span> (j = <span class="number">0</span>, jlen = eventArray.length; j &lt; jlen; j++) {
+            subscriber = eventArray[j];
+            ret = subscriber[<span class="number">0</span>].apply(subscriber[<span class="number">1</span>] || <span class="keyword">this</span>, args);
+            <span class="keyword">if</span> (subscriber[<span class="number">2</span>] &amp;&amp; ret !== <span class="literal">false</span>) {
+              <span class="keyword">this</span>.unsub(event, subscriber[<span class="number">0</span>]);
+            }
+          }
+          <span class="keyword">this</span>._pubsubHappened[event] = args;
+        }
+        <span class="keyword">return</span> <span class="keyword">this</span>;
+      },</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-4">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-4">&#182;</a>
+              </div>
+              <p>Parses the namespaced event string to identify its components.</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>      eventNamespace: <span class="keyword">function</span>(eventString) {
+        <span class="keyword">var</span> events = [], str = <span class="string">''</span>, ch, i;
+        <span class="keyword">for</span> (i = <span class="number">0</span>; i &lt; eventString.length; i++) {
+          <span class="keyword">if</span> ((ch = eventString.charAt(i)) === <span class="string">':'</span>) {
+            events.push(str);
+          }
+          str += ch;
+        }
+        events.push(str);
+        <span class="keyword">return</span> events;
+      },</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-5">
+            <div class="annotation">
+              
+              <div class="pilwrap for-h3">
+                <a class="pilcrow" href="#section-5">&#182;</a>
+              </div>
+              <h3>pubsub.sub</h3>
+<p>Subscribe a function to one or more events.</p>
+<ul>
+<li><strong>sub(eventString, method, [thisArg, [flags]])</strong><ul>
+<li><em>eventString</em> one or more space-separated events;</li>
+<li><em>method</em> the function to subscribe to the events;</li>
+<li><em>thisArg</em> (optional) context for the method;</li>
+<li><em>flags</em> (optional) boleans to configure the subscribers&#39;s behavior:<ul>
+<li><em>once</em> if true, the subscriber will self-unsubscribe after the first successful execution. You&#39;ll usually use <em>PubSub.once()</em> for this;</li>
+<li><em>recoup</em> if true, the subscriber will execute immediately if the event it subscribes to already happened. You&#39;ll usually use <em>PubSub.recoup()</em> for this.</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<p><em>Careful!</em> When subscribing a method to multiple events, if the events don‘t get published
+with compatible parameters, you can end up with weird behavior. To avoid this, it’s best to
+keep a common interface for all events in the list.</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>      sub: <span class="keyword">function</span>(eventStr, method, thisArg, flags) {
+        <span class="keyword">var</span> events = eventStr.split(<span class="regexp">/\s+/</span>), event, eventArray, i, len, oldArgs;
+        flags = flags || { once: <span class="literal">false</span>, recoup: <span class="literal">false</span> };
+        <span class="keyword">for</span> (i = <span class="number">0</span>, len = events.length; i &lt; len; i++) {
+          eventArray = <span class="keyword">this</span>._pubsubEvents[event = events[i]];
+          <span class="keyword">if</span> (eventArray) {
+            eventArray.push([method, thisArg, flags.once]);
+          } <span class="keyword">else</span> {
+            <span class="keyword">this</span>._pubsubEvents[event] = [[method, thisArg, flags.once]];
+          }
+          <span class="keyword">if</span> (flags.recoup) {
+            oldArgs = <span class="keyword">this</span>._pubsubHappened[event];
+            <span class="keyword">if</span> (oldArgs) {
+              method.apply(thisArg || <span class="keyword">this</span>, oldArgs);
+            }
+          }
+        }
+        <span class="keyword">return</span> <span class="keyword">this</span>;
+      },</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-6">
+            <div class="annotation">
+              
+              <div class="pilwrap for-h3">
+                <a class="pilcrow" href="#section-6">&#182;</a>
+              </div>
+              <h3>pubsub.unsub</h3>
+<p>Unsubscribe a function from one or more events.</p>
+<ul>
+<li><strong>unsub(eventString, method)</strong><ul>
+<li><em>eventString</em> one or more space-separated events;</li>
+<li><em>method</em> (optional) the function to unsubscribe</li>
+</ul>
+</li>
+</ul>
+<p>If no <em>method</em> is provided, all attached methods will be unsubscribed from the event(s).</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>      unsub: <span class="keyword">function</span>(eventStr, method) {
+        <span class="keyword">var</span> events = eventStr.split(<span class="regexp">/\s+/</span>), event, eventArray, newEventArray, i, j;
+        <span class="keyword">for</span> (i = <span class="number">0</span>; i &lt; events.length; i++) {
+          eventArray = <span class="keyword">this</span>._pubsubEvents[event = events[i]] || [];
+          newEventArray = [];
+          <span class="keyword">for</span> (j = <span class="number">0</span>; method &amp;&amp; j &lt; eventArray.length; j++) {
+            <span class="keyword">if</span> (eventArray[j][<span class="number">0</span>] !== method) {
+              newEventArray.push(eventArray[j]);
+            }
+          }
+          <span class="keyword">this</span>._pubsubEvents[event] = newEventArray;
+        }
+        <span class="keyword">return</span> <span class="keyword">this</span>;
+      },</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-7">
+            <div class="annotation">
+              
+              <div class="pilwrap for-h3">
+                <a class="pilcrow" href="#section-7">&#182;</a>
+              </div>
+              <h3>pubsub.once</h3>
+<p>Subscribe to an event once. </p>
+<p>The function will be unsubscribed upon successful exectution.
+To mark the function execution as unsuccessful 
+(and thus keep it subscribed), make it return <code>false</code>.</p>
+<ul>
+<li><strong>once(eventString, method, thisArg)</strong> identical to <em>PubSub.sub()</em>.</li>
+</ul>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>      once: <span class="keyword">function</span>(eventStr, method, thisArg) {
+        <span class="keyword">return</span> <span class="keyword">this</span>.sub(eventStr, method, thisArg, { once: <span class="literal">true</span> });
+      },</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-8">
+            <div class="annotation">
+              
+              <div class="pilwrap for-h3">
+                <a class="pilcrow" href="#section-8">&#182;</a>
+              </div>
+              <h3>pubsub.recoup</h3>
+<p>Subscribe to an event, and execute immediately if that event was ever published before.</p>
+<p>If executed immediately, the subscriber will get as parameters the last values sent with the event.</p>
+<ul>
+<li><strong>recoup(eventString, method, thisArg)</strong> identical to <em>PubSub.sub()</em>.</li>
+</ul>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>      recoup: <span class="keyword">function</span>(eventStr, method, thisArg) {
+        <span class="keyword">return</span> <span class="keyword">this</span>.sub(eventStr, method, thisArg, { recoup: <span class="literal">true</span> });
+      }
+	};
+
+	<span class="keyword">for</span> (<span class="keyword">var</span> i <span class="keyword">in</span> prototype) {
+		<span class="keyword">if</span> (prototype.hasOwnProperty(i)) {
+			pubsub.prototype[i] = prototype[i];
+		}
+	}
+})(<span class="keyword">this</span>);</pre></div></div>
+            
+        </li>
+        
+    </ul>
+  </div>
+</body>
+</html>
