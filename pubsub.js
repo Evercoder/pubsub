@@ -146,6 +146,7 @@
     }
   };
 
+  // Mix public methods into `pubsub`'s prototype.
   for (var i in prototype) {
     if (prototype.hasOwnProperty(i)) {
       pubsub.prototype[i] = prototype[i];
