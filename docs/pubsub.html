@@ -27,9 +27,9 @@
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-1">&#182;</a>
               </div>
-              <pre><code>    pubsub (c) <span class="number">2013</span> Dan Burzo
-    pubsub can be freely distributed under the MIT license.</code></pre>
-<p>Made by <a href="https://twitter.com/danburzo">@danburzo</a>.</p>
+              <p>   pubsub (c) 2013 Dan Burzo
+   pubsub can be freely distributed under the MIT license.
+Made by <a href="https://twitter.com/danburzo">@danburzo</a>.</p>
 <p>Fork &amp; contribute at <a href="https://github.com/danburzo/pubsub">github.com/danburzo/pubsub</a>. </p>
 <p>Download <a href="https://github.com/danburzo/pubsub/zipball/master">zip</a>, <a href="https://github.com/danburzo/pubsub/tarball/master">tar</a>. </p>
 <p>The guiding principles were: speed, terseness and progressive disclosure.</p>
@@ -51,15 +51,13 @@
             </div>
             
             <div class="content"><div class='highlight'><pre>(<span class="keyword">function</span>() {
-	<span class="keyword">var</span> root = <span class="keyword">this</span>;
+  <span class="keyword">var</span> root = <span class="keyword">this</span>;
 
-	<span class="keyword">var</span> pubsub = root.pubsub = <span class="keyword">function</span>(options) {
-		<span class="keyword">this</span>.options = options;
-		<span class="keyword">this</span>._pubsubEvents = {};
-		<span class="keyword">this</span>._pubsubHappened = {};
-	};
-
-	<span class="keyword">var</span> prototype = {</pre></div></div>
+  <span class="keyword">var</span> pubsub = root.pubsub = <span class="keyword">function</span>(options) {
+    <span class="keyword">this</span>.options = options;
+    <span class="keyword">this</span>._pubsubEvents = {};
+    <span class="keyword">this</span>._pubsubHappened = {};
+  };</pre></div></div>
             
         </li>
         
@@ -67,8 +65,25 @@
         <li id="section-3">
             <div class="annotation">
               
-              <div class="pilwrap for-h3">
+              <div class="pilwrap ">
                 <a class="pilcrow" href="#section-3">&#182;</a>
+              </div>
+              <p>Current version of the <code>pubsub</code>, using <a href="http://semver.org/">semantic versioning</a>.</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>  pubsub.version = <span class="string">'0.1.0'</span>;
+
+  <span class="keyword">var</span> prototype = {</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-4">
+            <div class="annotation">
+              
+              <div class="pilwrap for-h3">
+                <a class="pilcrow" href="#section-4">&#182;</a>
               </div>
               <h3>pubsub.pub</h3>
 <p>Publish an event.</p>
@@ -82,48 +97,23 @@
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>      pub: <span class="keyword">function</span>(eventString) {
-        <span class="keyword">var</span> eventComponents = <span class="keyword">this</span>.eventNamespace(eventString);
-        <span class="keyword">var</span> eventArray, i, ilen, j, jlen, args, subscriber, ret, event;
-        <span class="keyword">for</span> (i = <span class="number">0</span>, ilen = eventComponents.length; i &lt; ilen; i++) {
-          eventArray = <span class="keyword">this</span>._pubsubEvents[event = eventComponents[i]] || [];
-          args = Array.prototype.slice.call(arguments, <span class="number">1</span>);
-          <span class="keyword">for</span> (j = <span class="number">0</span>, jlen = eventArray.length; j &lt; jlen; j++) {
-            subscriber = eventArray[j];
-            ret = subscriber[<span class="number">0</span>].apply(subscriber[<span class="number">1</span>] || <span class="keyword">this</span>, args);
-            <span class="keyword">if</span> (subscriber[<span class="number">2</span>] &amp;&amp; ret !== <span class="literal">false</span>) {
-              <span class="keyword">this</span>.unsub(event, subscriber[<span class="number">0</span>]);
-            }
+            <div class="content"><div class='highlight'><pre>    pub: <span class="keyword">function</span>(eventString) {
+      <span class="keyword">var</span> eventComponents = <span class="keyword">this</span>.eventNamespace(eventString);
+      <span class="keyword">var</span> eventArray, i, ilen, j, jlen, args, subscriber, ret, event;
+      <span class="keyword">for</span> (i = <span class="number">0</span>, ilen = eventComponents.length; i &lt; ilen; i++) {
+        eventArray = <span class="keyword">this</span>._pubsubEvents[event = eventComponents[i]] || [];
+        args = Array.prototype.slice.call(arguments, <span class="number">1</span>);
+        <span class="keyword">for</span> (j = <span class="number">0</span>, jlen = eventArray.length; j &lt; jlen; j++) {
+          subscriber = eventArray[j];
+          ret = subscriber[<span class="number">0</span>].apply(subscriber[<span class="number">1</span>] || <span class="keyword">this</span>, args);
+          <span class="keyword">if</span> (subscriber[<span class="number">2</span>] &amp;&amp; ret !== <span class="literal">false</span>) {
+            <span class="keyword">this</span>.unsub(event, subscriber[<span class="number">0</span>]);
           }
-          <span class="keyword">this</span>._pubsubHappened[event] = args;
         }
-        <span class="keyword">return</span> <span class="keyword">this</span>;
-      },</pre></div></div>
-            
-        </li>
-        
-        
-        <li id="section-4">
-            <div class="annotation">
-              
-              <div class="pilwrap ">
-                <a class="pilcrow" href="#section-4">&#182;</a>
-              </div>
-              <p>Parses the namespaced event string to identify its components.</p>
-
-            </div>
-            
-            <div class="content"><div class='highlight'><pre>      eventNamespace: <span class="keyword">function</span>(eventString) {
-        <span class="keyword">var</span> events = [], str = <span class="string">''</span>, ch, i;
-        <span class="keyword">for</span> (i = <span class="number">0</span>; i &lt; eventString.length; i++) {
-          <span class="keyword">if</span> ((ch = eventString.charAt(i)) === <span class="string">':'</span>) {
-            events.push(str);
-          }
-          str += ch;
-        }
-        events.push(str);
-        <span class="keyword">return</span> events;
-      },</pre></div></div>
+        <span class="keyword">this</span>._pubsubHappened[event] = args;
+      }
+      <span class="keyword">return</span> <span class="keyword">this</span>;
+    },</pre></div></div>
             
         </li>
         
@@ -142,38 +132,36 @@
 <li><em>method</em> the function to subscribe to the events;</li>
 <li><em>thisArg</em> (optional) context for the method;</li>
 <li><em>flags</em> (optional) boleans to configure the subscribers&#39;s behavior:<ul>
-<li><em>once</em> if true, the subscriber will self-unsubscribe after the first successful execution. You&#39;ll usually use <em>PubSub.once()</em> for this;</li>
-<li><em>recoup</em> if true, the subscriber will execute immediately if the event it subscribes to already happened. You&#39;ll usually use <em>PubSub.recoup()</em> for this.</li>
+<li><em>once</em> if true, the subscriber will self-unsubscribe after the first successful execution. Use <em>pubsub.once()</em> for clarity;</li>
+<li><em>recoup</em> if true, the subscriber will execute immediately if the event it subscribes to already happened. Use <em>pubsub.recoup()</em> for clarity.</li>
 </ul>
 </li>
 </ul>
 </li>
 </ul>
-<p><em>Careful!</em> When subscribing a method to multiple events, if the events don‘t get published
-with compatible parameters, you can end up with weird behavior. To avoid this, it’s best to
-keep a common interface for all events in the list.</p>
+<p><em>Note:</em> When subscribing to multiple events, make sure these events are published with the same (or similar) list of arguments.</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>      sub: <span class="keyword">function</span>(eventStr, method, thisArg, flags) {
-        <span class="keyword">var</span> events = eventStr.split(<span class="regexp">/\s+/</span>), event, eventArray, i, len, oldArgs;
-        flags = flags || { once: <span class="literal">false</span>, recoup: <span class="literal">false</span> };
-        <span class="keyword">for</span> (i = <span class="number">0</span>, len = events.length; i &lt; len; i++) {
-          eventArray = <span class="keyword">this</span>._pubsubEvents[event = events[i]];
-          <span class="keyword">if</span> (eventArray) {
-            eventArray.push([method, thisArg, flags.once]);
-          } <span class="keyword">else</span> {
-            <span class="keyword">this</span>._pubsubEvents[event] = [[method, thisArg, flags.once]];
-          }
-          <span class="keyword">if</span> (flags.recoup) {
-            oldArgs = <span class="keyword">this</span>._pubsubHappened[event];
-            <span class="keyword">if</span> (oldArgs) {
-              method.apply(thisArg || <span class="keyword">this</span>, oldArgs);
-            }
+            <div class="content"><div class='highlight'><pre>    sub: <span class="keyword">function</span>(eventStr, method, thisArg, flags) {
+      <span class="keyword">var</span> events = eventStr.split(<span class="regexp">/\s+/</span>), event, eventArray, i, len, oldArgs;
+      flags = flags || { once: <span class="literal">false</span>, recoup: <span class="literal">false</span> };
+      <span class="keyword">for</span> (i = <span class="number">0</span>, len = events.length; i &lt; len; i++) {
+        eventArray = <span class="keyword">this</span>._pubsubEvents[event = events[i]];
+        <span class="keyword">if</span> (eventArray) {
+          eventArray.push([method, thisArg, flags.once]);
+        } <span class="keyword">else</span> {
+          <span class="keyword">this</span>._pubsubEvents[event] = [[method, thisArg, flags.once]];
+        }
+        <span class="keyword">if</span> (flags.recoup) {
+          oldArgs = <span class="keyword">this</span>._pubsubHappened[event];
+          <span class="keyword">if</span> (oldArgs) {
+            method.apply(thisArg || <span class="keyword">this</span>, oldArgs);
           }
         }
-        <span class="keyword">return</span> <span class="keyword">this</span>;
-      },</pre></div></div>
+      }
+      <span class="keyword">return</span> <span class="keyword">this</span>;
+    },</pre></div></div>
             
         </li>
         
@@ -197,20 +185,20 @@ keep a common interface for all events in the list.</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>      unsub: <span class="keyword">function</span>(eventStr, method) {
-        <span class="keyword">var</span> events = eventStr.split(<span class="regexp">/\s+/</span>), event, eventArray, newEventArray, i, j;
-        <span class="keyword">for</span> (i = <span class="number">0</span>; i &lt; events.length; i++) {
-          eventArray = <span class="keyword">this</span>._pubsubEvents[event = events[i]] || [];
-          newEventArray = [];
-          <span class="keyword">for</span> (j = <span class="number">0</span>; method &amp;&amp; j &lt; eventArray.length; j++) {
-            <span class="keyword">if</span> (eventArray[j][<span class="number">0</span>] !== method) {
-              newEventArray.push(eventArray[j]);
-            }
+            <div class="content"><div class='highlight'><pre>    unsub: <span class="keyword">function</span>(eventStr, method) {
+      <span class="keyword">var</span> events = eventStr.split(<span class="regexp">/\s+/</span>), event, eventArray, newEventArray, i, j;
+      <span class="keyword">for</span> (i = <span class="number">0</span>; i &lt; events.length; i++) {
+        eventArray = <span class="keyword">this</span>._pubsubEvents[event = events[i]] || [];
+        newEventArray = [];
+        <span class="keyword">for</span> (j = <span class="number">0</span>; method &amp;&amp; j &lt; eventArray.length; j++) {
+          <span class="keyword">if</span> (eventArray[j][<span class="number">0</span>] !== method) {
+            newEventArray.push(eventArray[j]);
           }
-          <span class="keyword">this</span>._pubsubEvents[event] = newEventArray;
         }
-        <span class="keyword">return</span> <span class="keyword">this</span>;
-      },</pre></div></div>
+        <span class="keyword">this</span>._pubsubEvents[event] = newEventArray;
+      }
+      <span class="keyword">return</span> <span class="keyword">this</span>;
+    },</pre></div></div>
             
         </li>
         
@@ -227,14 +215,14 @@ keep a common interface for all events in the list.</p>
 To mark the function execution as unsuccessful 
 (and thus keep it subscribed), make it return <code>false</code>.</p>
 <ul>
-<li><strong>once(eventString, method, thisArg)</strong> identical to <em>PubSub.sub()</em>.</li>
+<li><strong>once(eventString, method, thisArg)</strong> identical to <em>pubsub.sub()</em>.</li>
 </ul>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>      once: <span class="keyword">function</span>(eventStr, method, thisArg) {
-        <span class="keyword">return</span> <span class="keyword">this</span>.sub(eventStr, method, thisArg, { once: <span class="literal">true</span> });
-      },</pre></div></div>
+            <div class="content"><div class='highlight'><pre>    once: <span class="keyword">function</span>(eventStr, method, thisArg) {
+      <span class="keyword">return</span> <span class="keyword">this</span>.sub(eventStr, method, thisArg, { once: <span class="literal">true</span> });
+    },</pre></div></div>
             
         </li>
         
@@ -249,21 +237,65 @@ To mark the function execution as unsuccessful
 <p>Subscribe to an event, and execute immediately if that event was ever published before.</p>
 <p>If executed immediately, the subscriber will get as parameters the last values sent with the event.</p>
 <ul>
-<li><strong>recoup(eventString, method, thisArg)</strong> identical to <em>PubSub.sub()</em>.</li>
+<li><strong>recoup(eventString, method, thisArg)</strong> identical to <em>pubsub.sub()</em>.</li>
 </ul>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>      recoup: <span class="keyword">function</span>(eventStr, method, thisArg) {
-        <span class="keyword">return</span> <span class="keyword">this</span>.sub(eventStr, method, thisArg, { recoup: <span class="literal">true</span> });
-      }
-	};
+            <div class="content"><div class='highlight'><pre>    recoup: <span class="keyword">function</span>(eventStr, method, thisArg) {
+      <span class="keyword">return</span> <span class="keyword">this</span>.sub(eventStr, method, thisArg, { recoup: <span class="literal">true</span> });
+    },</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-9">
+            <div class="annotation">
+              
+              <div class="pilwrap for-h3">
+                <a class="pilcrow" href="#section-9">&#182;</a>
+              </div>
+              <h3>pubsub.eventSplitter</h3>
+<p>The character on which to split the event namespace.</p>
 
-	<span class="keyword">for</span> (<span class="keyword">var</span> i <span class="keyword">in</span> prototype) {
-		<span class="keyword">if</span> (prototype.hasOwnProperty(i)) {
-			pubsub.prototype[i] = prototype[i];
-		}
-	}
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>    eventSplitter: <span class="string">':'</span>,</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-10">
+            <div class="annotation">
+              
+              <div class="pilwrap for-h3">
+                <a class="pilcrow" href="#section-10">&#182;</a>
+              </div>
+              <h3>pubsub.eventNamespace</h3>
+<p>Parses the namespaced event string and returns an array of events to publish.
+The original implementation does: <code>&quot;path:to:event&quot; =&gt; [&quot;path&quot;, &quot;path:to&quot;, &quot;path:to:event&quot;]</code>.
+Overwrite the implementation to create your custom namespacing rules.</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>    eventNamespace: <span class="keyword">function</span>(eventString) {
+      <span class="keyword">var</span> events = [], str = <span class="string">''</span>, ch, i, splitter = <span class="keyword">this</span>.eventSplitter;
+      <span class="keyword">for</span> (i = <span class="number">0</span>; i &lt; eventString.length; i++) {
+        <span class="keyword">if</span> ((ch = eventString.charAt(i)) === splitter) {
+          events.push(str);
+        }
+        str += ch;
+      }
+      events.push(str);
+      <span class="keyword">return</span> events;
+    }
+  };
+
+  <span class="keyword">for</span> (<span class="keyword">var</span> i <span class="keyword">in</span> prototype) {
+    <span class="keyword">if</span> (prototype.hasOwnProperty(i)) {
+      pubsub.prototype[i] = prototype[i];
+    }
+  }
 })(<span class="keyword">this</span>);</pre></div></div>
             
         </li>
