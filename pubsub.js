@@ -35,7 +35,10 @@
       var eventArray, i, ilen, j, jlen, args, subscriber, ret, event;
       for (i = 0, ilen = eventComponents.length; i < ilen; i++) {
         eventArray = this._pubsubEvents[event = eventComponents[i]] || [];
-        args = Array.prototype.slice.call(arguments, 1);
+        args = [];
+        for (j = 1; j < arguments.length; j++) {
+          args.push(arguments[j]);
+        }
         for (j = 0, jlen = eventArray.length; j < jlen; j++) {
           subscriber = eventArray[j];
           ret = subscriber[0].apply(subscriber[1] || this, args);
