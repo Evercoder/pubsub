@@ -3,6 +3,7 @@
 	"version": "0.1.2",
 	"main": "dist/pubsub.umd.js",
 	"module": "dist/pubsub.js",
+	"private": false,
 	"devDependencies": {
 		"husky": "^0.14.3",
 		"prettier": "^1.13.7",
