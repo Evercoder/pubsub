@@ -14,7 +14,8 @@
 	"scripts": {
 		"precommit": "pretty-quick --staged",
 		"start": "rollup -c -w",
-		"build": "rollup -c"
+		"build": "rollup -c",
+		"test": "yarn build && tape test/tests.js"
 	},
 	"prettier": {
 		"bracketSpacing": true,

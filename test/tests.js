@@ -1,10 +1,11 @@
-module('pubsub');
+let test = require('tape');
+let pubsub = require('../dist/pubsub.umd.js');
 
-test('PubSub basic use case', function() {
-	expect(2);
+test('PubSub basic use case', t => {
+	t.plan(2);
 	var ps = new pubsub();
 	ps.sub('topic', function() {
-		ok('here!', 'single subscriber');
+		t.pass('single subscriber');
 	});
 	ps.pub('topic');
 	var count = 0;
@@ -21,37 +22,39 @@ test('PubSub basic use case', function() {
 		count++;
 	});
 	ps.pub('topic2');
-	strictEqual(count, 3, 'multiple subscribers');
+	t.equal(count, 3, 'multiple subscribers');
+	t.end();
 });
 
-test('PubSub.once()', function() {
-	expect(7);
+test('PubSub.once()', t => {
+	t.plan(7);
 	var ps = new pubsub(),
 		ran = 0;
 	ps.sub('topic', function() {
-		ok('here!', 'im a recurring subscriber');
+		t.pass('im a recurring subscriber');
 	})
 		.once('topic', function() {
-			ok('here!', 'im a one-time subscriber');
+			t.pass('im a one-time subscriber');
 		})
 		.once('topic', function() {
-			ok('here!', 'im a two-time subscriber');
+			t.pass('im a two-time subscriber');
 			if (++ran < 2) return false;
 		})
 		.pub('topic')
 		.pub('topic')
 		.pub('topic')
 		.pub('topic');
+	t.end();
 });
 
-test('PubSub.sub() to multiple events, .once() to multiple events', function() {
-	expect(9);
+test('PubSub.sub() to multiple events, .once() to multiple events', t => {
+	t.plan(9);
 	var ps = new pubsub();
 	ps.sub('topic1 topic2 topic3', function() {
-		ok('here!', 'im a subscriber');
+		t.pass('im a subscriber');
 	});
 	ps.once('topic1 topic2 topic3', function() {
-		ok('here!', 'im a subscriber');
+		t.pass('im a subscriber');
 	});
 	ps.pub('topic1')
 		.pub('topic2')
@@ -59,13 +62,14 @@ test('PubSub.sub() to multiple events, .once() to multiple events', function() {
 	ps.pub('topic1')
 		.pub('topic2')
 		.pub('topic3');
+	t.end();
 });
 
-test('PubSub.unsub()', function() {
-	expect(2);
+test('PubSub.unsub()', t => {
+	t.plan(2);
 	var ps = new pubsub();
 	var f = function() {
-		ok('here!', 'subscriber executed');
+		t.pass('subscriber executed');
 	};
 	ps.sub('event1 event2', f);
 	ps.pub('event1');
@@ -73,13 +77,14 @@ test('PubSub.unsub()', function() {
 	ps.pub('event1');
 	ps.unsub('event1', f);
 	ps.pub('event1');
+	t.end();
 });
 
-test('PubSub.unsub() with non-subscribed method', function() {
-	expect(1);
+test('PubSub.unsub() with non-subscribed method', t => {
+	t.plan(1);
 	var ps = new pubsub();
 	var f1 = function() {
-		ok('yay!', 'f1 triggered');
+		t.pass('f1 triggered');
 	};
 	var f2 = function() {
 		/* no-op */
@@ -87,72 +92,77 @@ test('PubSub.unsub() with non-subscribed method', function() {
 	ps.sub('event', f1)
 		.unsub('event', f2)
 		.pub('event');
+	t.end();
 });
 
-test('PubSub.unsub() with no method', function() {
-	expect(0);
+test('PubSub.unsub() with no method', t => {
+	t.plan(0);
 	var ps = new pubsub();
 	var f1 = function() {
-		ok('you should not see this', 'f1 triggered');
+		t.pass('f1 triggered');
 	};
 	var f2 = function() {
-		ok('you should not see this', 'f1 triggered');
+		t.pass('f1 triggered');
 	};
 	var f3 = function() {
-		ok('you should not see this', 'f1 triggered');
+		t.pass('f1 triggered');
 	};
 	ps.sub('event', f1)
 		.sub('event', f2)
 		.sub('event', f3);
 	ps.unsub('event');
+	t.end();
 });
 
-test('PubSub: namespaced events', function() {
-	expect(2);
+test('PubSub: namespaced events', t => {
+	t.plan(2);
 	var ps = new pubsub();
 	ps.sub('namespace:topic1', function() {
-		ok('here!', 'subscriber to topic1 in namespace');
+		t.pass('subscriber to topic1 in namespace');
 	});
 	ps.sub('namespace:topic2', function() {
-		ok('here!', 'subscriber to topic2 in namespace');
+		t.pass('subscriber to topic2 in namespace');
 	});
 	ps.sub('namespace', function() {
-		ok('here!', 'subscriber to entire namespace');
+		t.pass('subscriber to entire namespace');
 	});
 	ps.sub('namespace2:topic1', function() {
-		ok('here!', 'subscriber to topic1 in different namespace');
+		t.pass('subscriber to topic1 in different namespace');
 	});
 	ps.pub('namespace:topic1');
+	t.end();
 });
 
-test('PubSub: nested namespaces', function() {
-	expect(3);
+test('PubSub: nested namespaces', t => {
+	t.plan(3);
 	var ps = new pubsub();
 	ps.sub('parent:child:event', function() {
-		ok('here!', 'subscribed to specific event');
+		t.pass('subscribed to specific event');
 	});
 	ps.sub('parent:child', function() {
-		ok('here!', 'subscribed to sub-namespace');
+		t.pass('subscribed to sub-namespace');
 	});
 	ps.sub('parent', function() {
-		ok('here!', 'subscribed to entire namespace');
+		t.pass('subscribed to entire namespace');
 	});
 	ps.sub('child:event', function() {
-		ok('here!', 'subscribed to invalid namespace portion');
+		t.pass('subscribed to invalid namespace portion');
 	});
 	ps.pub('parent:child:event');
+	t.end();
 });
 
-test('PubSub.recoup()', function() {
-	expect(4);
+test('PubSub.recoup()', t => {
+	t.plan(4);
 	var ps = new pubsub();
 	ps.pub('event1', 1, 2, 3);
 	ps.pub('event2', 1, 2, 3);
 	ps.recoup('event1', function() {
-		strictEqual(arguments.length, 3, 'correct args');
+		t.equal(arguments.length, 3, 'correct args');
 	});
 	ps.recoup('event1', function() {
-		strictEqual(arguments.length, 3, 'correct args');
+		t.equal(arguments.length, 3, 'correct args');
 	});
 	ps.pub('event1', 3, 4, 5);
+	t.end();
 });

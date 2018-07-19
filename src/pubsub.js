@@ -5,13 +5,17 @@ class pubsub {
 		this._pubsubHappened = {};
 	}
 
-	// ### pubsub.pub
-	// Publish an event.
-	//
-	// * **pub(event, [arg1, [arg2 ...]])**
-	//  * *event* the event to trigger;
-	//  * *arg1 ... argN* (optional) any number of additional params to pass to the event subscribers.
+	/*
+		Publish an event.
+		
+		* **pub(event, [arg1, [arg2 ...]])**
+		 * *event* the event to trigger;
+		 * *arg1 ... argN* (optional) any number of additional params to pass to the event subscribers.
+	*/
 	pub(eventString) {
+		if (!eventString) {
+			throw new Error('pubsub.pub() received empty event string');
+		}
 		var eventComponents = this.eventNamespace(eventString);
 		var eventArray, i, ilen, j, jlen, args, subscriber, ret, event;
 		for (i = 0, ilen = eventComponents.length; i < ilen; i++) {
@@ -32,19 +36,23 @@ class pubsub {
 		return this;
 	}
 
-	// ### pubsub.sub
-	// Subscribe a function to one or more events.
-	//
-	//  * **sub(eventString, method, [thisArg, [flags]])**
-	//    * *eventString* one or more space-separated events;
-	//    * *method* the function to subscribe to the events;
-	//    * *thisArg* (optional) context for the method;
-	//    * *flags* (optional) boleans to configure the subscribers's behavior:
-	//      * *once* if true, the subscriber will self-unsubscribe after the first successful execution. Use *pubsub.once()* for clarity;
-	//      * *recoup* if true, the subscriber will execute immediately if the event it subscribes to already happened. Use *pubsub.recoup()* for clarity.
-	//
-	// *Note:* When subscribing to multiple events, make sure these events are published with the same (or similar) list of arguments.
+	/*
+		Subscribe a function to one or more events.
+		
+		 * **sub(eventString, method, [thisArg, [flags]])**
+		   * *eventString* one or more space-separated events;
+		   * *method* the function to subscribe to the events;
+		   * *thisArg* (optional) context for the method;
+		   * *flags* (optional) boleans to configure the subscribers's behavior:
+		     * *once* if true, the subscriber will self-unsubscribe after the first successful execution. Use *pubsub.once()* for clarity;
+		     * *recoup* if true, the subscriber will execute immediately if the event it subscribes to already happened. Use *pubsub.recoup()* for clarity.
+		
+		*Note:* When subscribing to multiple events, make sure these events are published with the same (or similar) list of arguments.
+	*/
 	sub(eventStr, method, thisArg, flags) {
+		if (!eventStr) {
+			throw new Error('pubsub.sub() received empty event string');
+		}
 		var events = eventStr.split(/\s+/),
 			event,
 			eventArray,
@@ -69,15 +77,19 @@ class pubsub {
 		return this;
 	}
 
-	// ### pubsub.unsub
-	// Unsubscribe a function from one or more events.
-	//
-	//  * **unsub(eventString, method)**
-	//    * *eventString* one or more space-separated events;
-	//    * *method* (optional) the function to unsubscribe
-	//
-	// If no *method* is provided, all attached methods will be unsubscribed from the event(s).
+	/*
+		Unsubscribe a function from one or more events.
+		
+		 * **unsub(eventString, method)**
+		   * *eventString* one or more space-separated events;
+		   * *method* (optional) the function to unsubscribe
+		
+		If no *method* is provided, all attached methods will be unsubscribed from the event(s).
+	*/
 	unsub(eventStr, method) {
+		if (!eventStr) {
+			throw new Error('pubsub.unsub() received empty event string');
+		}
 		var events = eventStr.split(/\s+/),
 			event,
 			eventArray,
@@ -97,32 +109,38 @@ class pubsub {
 		return this;
 	}
 
-	// ### pubsub.once
-	// Subscribe to an event once.
-	//
-	// The function will be unsubscribed upon successful exectution.
-	// To mark the function execution as unsuccessful
-	// (and thus keep it subscribed), make it return `false`.
-	//
-	//  * **once(eventString, method, thisArg)** identical to *pubsub.sub()*.
+	/*
+		### pubsub.once
+		Subscribe to an event once.
+		
+		The function will be unsubscribed upon successful exectution.
+		To mark the function execution as unsuccessful
+		(and thus keep it subscribed), make it return `false`.
+		
+		 * **once(eventString, method, thisArg)** identical to *pubsub.sub()*.
+	*/
 	once(eventStr, method, thisArg) {
 		return this.sub(eventStr, method, thisArg, { once: true });
 	}
 
-	// ### pubsub.recoup
-	// Subscribe to an event, and execute immediately if that event was ever published before.
-	//
-	// If executed immediately, the subscriber will get as parameters the last values sent with the event.
-	//
-	//  * **recoup(eventString, method, thisArg)** identical to *pubsub.sub()*.
+	/*
+		### pubsub.recoup
+		Subscribe to an event, and execute immediately if that event was ever published before.
+		
+		If executed immediately, the subscriber will get as parameters the last values sent with the event.
+		
+		 * **recoup(eventString, method, thisArg)** identical to *pubsub.sub()*.
+	*/
 	recoup(eventStr, method, thisArg) {
 		return this.sub(eventStr, method, thisArg, { recoup: true });
 	}
 
-	// ### pubsub.eventNamespace
-	// Parses the namespaced event string and returns an array of events to publish.
-	// The original implementation does: `"path:to:event" => ["path", "path:to", "path:to:event"]`.
-	// Overwrite the implementation to create your custom namespacing rules.
+	/*
+		### pubsub.eventNamespace
+		Parses the namespaced event string and returns an array of events to publish.
+		The original implementation does: `"path:to:event" => ["path", "path:to", "path:to:event"]`.
+		Overwrite the implementation to create your custom namespacing rules.
+	*/
 	eventNamespace(eventString) {
 		var events = [],
 			str = '',
