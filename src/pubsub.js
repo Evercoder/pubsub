@@ -1,5 +1,5 @@
 class pubsub {
-	constructor(options) {
+	constructor(options = {}) {
 		this.options = options;
 		this._pubsubEvents = {};
 		this._pubsubHappened = {};
