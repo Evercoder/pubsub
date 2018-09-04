@@ -9,7 +9,11 @@ export default [
 			name: 'pubsub',
 			file: pkg.main
 		},
-		plugins: [buble()]
+		plugins: [
+			buble({
+				objectAssign: 'Object.assign'
+			})
+		]
 	},
 	{
 		input: 'src/pubsub.js',
@@ -17,6 +21,10 @@ export default [
 			format: 'es',
 			file: pkg.module
 		},
-		plugins: [buble()]
+		plugins: [
+			buble({
+				objectAssign: 'Object.assign'
+			})
+		]
 	}
 ];

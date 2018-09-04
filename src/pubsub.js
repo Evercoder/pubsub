@@ -1,6 +1,18 @@
 class pubsub {
-	constructor(options = {}) {
-		this.options = options;
+	constructor(options) {
+		this.options = {
+			/*
+				Enables strict mode (shows more warnings)
+			 */
+			strict: false,
+
+			/*
+				Accepts a custom logger
+			 */
+			log: false,
+
+			...options
+		};
 		this._pubsubEvents = {};
 		this._pubsubHappened = {};
 	}
@@ -31,6 +43,11 @@ class pubsub {
 			for (j = 1; j < arguments.length; j++) {
 				args.push(arguments[j]);
 			}
+
+			if (this.options.log) {
+				this.options.log(event, args);
+			}
+
 			for (j = 0, jlen = eventArray.length; j < jlen; j++) {
 				subscriber = eventArray[j];
 				ret = subscriber[0].apply(subscriber[1] || this, args);
