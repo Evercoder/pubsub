@@ -90,7 +90,20 @@ class pubsub {
 			} else {
 				this._pubsubEvents[event] = [[method, thisArg, flags.once]];
 			}
+
+			if (this.options.strict && this._pubsubHappened[event]) {
+				console.warn(
+					`Warning: subscribing to an event that already happened. Re: ${eventStr}`
+				);
+			}
+
 			if (flags.recoup) {
+				if (this.options.strict) {
+					console.warn(
+						`recoup() is deprecated; please find an alternative. Re: ${eventStr}`
+					);
+				}
+
 				oldArgs = this._pubsubHappened[event];
 				if (oldArgs) {
 					method.apply(thisArg || this, oldArgs);
