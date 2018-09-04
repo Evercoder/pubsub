@@ -16,6 +16,13 @@ class pubsub {
 		if (!eventString) {
 			throw new Error('pubsub.pub() received empty event string');
 		}
+
+		if (arguments.length > 2) {
+			console.warn(
+				`[Deprecated]: Publishing an event with multiple arguments is deprecated. Re: ${eventString}`
+			);
+		}
+
 		var eventComponents = this.eventNamespace(eventString);
 		var eventArray, i, ilen, j, jlen, args, subscriber, ret, event;
 		for (i = 0, ilen = eventComponents.length; i < ilen; i++) {
@@ -53,12 +60,28 @@ class pubsub {
 		if (!eventStr) {
 			throw new Error('pubsub.sub() received empty event string');
 		}
-		var events = eventStr.split(/\s+/),
-			event,
-			eventArray,
-			i,
-			len,
-			oldArgs;
+
+		if (thisArg) {
+			console.warn(
+				`sub(): thisArg is deprecated, please bind your method manually. Re: ${eventStr}`
+			);
+		}
+
+		var events;
+
+		if (Array.isArray(eventStr)) {
+			events = eventStr;
+		} else {
+			events = eventStr.split(/\s+/);
+			if (events.length > 1) {
+				console.warn(
+					`Subscribing to space-separated events is deprecated; please use an array of events. Re: ${eventStr}`
+				);
+			}
+		}
+
+		var event, eventArray, i, len, oldArgs;
+
 		flags = flags || { once: false, recoup: false };
 		for (i = 0, len = events.length; i < len; i++) {
 			eventArray = this._pubsubEvents[(event = events[i])];
