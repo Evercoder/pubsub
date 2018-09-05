@@ -45,7 +45,7 @@ class pubsub {
 			}
 
 			if (this.options.log) {
-				this.options.log(event, args);
+				this.options.log('pub', event, args);
 			}
 
 			for (j = 0, jlen = eventArray.length; j < jlen; j++) {
@@ -75,13 +75,21 @@ class pubsub {
 	*/
 	sub(eventStr, method, thisArg, flags) {
 		if (!eventStr) {
-			throw new Error('pubsub.sub() received empty event string');
+			throw new Error('sub(): received empty event string');
 		}
 
-		if (thisArg && this.options.strict) {
+		if (!method) {
+			throw new Error('sub(): listener is undefined');
+		}
+
+		if (this.options.strict && thisArg) {
 			console.warn(
 				`[Deprecated] sub(): thisArg is deprecated; bind method manually instead. Re: ${eventStr}`
 			);
+		}
+
+		if (this.options.log) {
+			this.options.log('sub', eventStr, method, flags);
 		}
 
 		var events;
@@ -146,6 +154,10 @@ class pubsub {
 
 		if (this.options.strict && !method) {
 			console.warn(`[Deprecated] unsub(): called without a listener. Re: ${eventStr}`);
+		}
+
+		if (this.options.log) {
+			this.options.log('unsub', eventStr, method, flags);
 		}
 
 		var events = eventStr.split(/\s+/),
