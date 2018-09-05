@@ -29,9 +29,9 @@ class pubsub {
 			throw new Error('pubsub.pub() received empty event string');
 		}
 
-		if (arguments.length > 2) {
+		if (this.options.strict && arguments.length > 2) {
 			console.warn(
-				`[Deprecated]: Publishing an event with multiple arguments is deprecated. Re: ${eventString}`
+				`[Deprecated] pub(): Publishing an event with many arguments is deprecated; use a single argument for the payload. Re: ${eventString}`
 			);
 		}
 
@@ -78,9 +78,9 @@ class pubsub {
 			throw new Error('pubsub.sub() received empty event string');
 		}
 
-		if (thisArg) {
+		if (thisArg && this.options.strict) {
 			console.warn(
-				`sub(): thisArg is deprecated, please bind your method manually. Re: ${eventStr}`
+				`[Deprecated] sub(): thisArg is deprecated; bind method manually instead. Re: ${eventStr}`
 			);
 		}
 
@@ -90,9 +90,9 @@ class pubsub {
 			events = eventStr;
 		} else {
 			events = eventStr.split(/\s+/);
-			if (events.length > 1) {
+			if (this.options.strict && events.length > 1) {
 				console.warn(
-					`Subscribing to space-separated events is deprecated; please use an array of events. Re: ${eventStr}`
+					`[Deprecated] sub(): Subscribing to space-separated events is deprecated; use Array instead. Re: ${eventStr}`
 				);
 			}
 		}
@@ -110,14 +110,14 @@ class pubsub {
 
 			if (this.options.strict && this._pubsubHappened[event]) {
 				console.warn(
-					`Warning: subscribing to an event that already happened. Re: ${eventStr}`
+					`[Warn] Subscribing to an event that already happened. Re: ${eventStr}`
 				);
 			}
 
 			if (flags.recoup) {
 				if (this.options.strict) {
 					console.warn(
-						`recoup() is deprecated; please find an alternative. Re: ${eventStr}`
+						`[Deprecated] recoup(): this method is deprecated; please consider an alternative pattern. Re: ${eventStr}`
 					);
 				}
 
@@ -143,6 +143,11 @@ class pubsub {
 		if (!eventStr) {
 			throw new Error('pubsub.unsub() received empty event string');
 		}
+
+		if (this.options.strict && !method) {
+			console.warn(`[Deprecated] unsub(): called without a listener. Re: ${eventStr}`);
+		}
+
 		var events = eventStr.split(/\s+/),
 			event,
 			eventArray,
