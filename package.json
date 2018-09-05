@@ -1,6 +1,6 @@
 {
 	"name": "@evercoder/pubsub",
-	"version": "0.2.4",
+	"version": "0.2.5",
 	"main": "dist/pubsub.umd.js",
 	"module": "dist/pubsub.js",
 	"private": false,
