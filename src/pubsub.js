@@ -157,7 +157,7 @@ class pubsub {
 		}
 
 		if (this.options.log) {
-			this.options.log('unsub', eventStr, method, flags);
+			this.options.log('unsub', eventStr, method);
 		}
 
 		var events = eventStr.split(/\s+/),
