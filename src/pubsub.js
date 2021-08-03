@@ -160,8 +160,20 @@ class pubsub {
 			this.options.log('unsub', eventStr, method);
 		}
 
-		var events = eventStr.split(/\s+/),
-			event,
+		var events;
+
+		if (Array.isArray(eventStr)) {
+			events = eventStr;
+		} else {
+			events = eventStr.split(/\s+/);
+			if (this.options.strict && events.length > 1) {
+				console.warn(
+					`[Deprecated] unsub(): Unsubscribing to space-separated events is deprecated; use Array instead. Re: ${eventStr}`
+				);
+			}
+		}
+
+		var event,
 			eventArray,
 			newEventArray,
 			i,

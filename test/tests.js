@@ -1,7 +1,7 @@
-let test = require('tape');
-let pubsub = require('../dist/pubsub.umd.js');
+import tape from 'tape';
+import pubsub from '../src/pubsub.js';
 
-test('PubSub basic use case', t => {
+tape('PubSub basic use case', t => {
 	t.plan(2);
 	var ps = new pubsub();
 	ps.sub('topic', function() {
@@ -26,7 +26,7 @@ test('PubSub basic use case', t => {
 	t.end();
 });
 
-test('PubSub.once()', t => {
+tape('PubSub.once()', t => {
 	t.plan(7);
 	var ps = new pubsub(),
 		ran = 0;
@@ -47,7 +47,7 @@ test('PubSub.once()', t => {
 	t.end();
 });
 
-test('PubSub.sub() to multiple events, .once() to multiple events', t => {
+tape('PubSub.sub() to multiple events, .once() to multiple events', t => {
 	t.plan(9);
 	var ps = new pubsub();
 	ps.sub('topic1 topic2 topic3', function() {
@@ -65,7 +65,7 @@ test('PubSub.sub() to multiple events, .once() to multiple events', t => {
 	t.end();
 });
 
-test('PubSub.unsub()', t => {
+tape('PubSub.unsub()', t => {
 	t.plan(2);
 	var ps = new pubsub();
 	var f = function() {
@@ -80,7 +80,7 @@ test('PubSub.unsub()', t => {
 	t.end();
 });
 
-test('PubSub.unsub() with non-subscribed method', t => {
+tape('PubSub.unsub() with non-subscribed method', t => {
 	t.plan(1);
 	var ps = new pubsub();
 	var f1 = function() {
@@ -95,7 +95,7 @@ test('PubSub.unsub() with non-subscribed method', t => {
 	t.end();
 });
 
-test('PubSub.unsub() with no method', t => {
+tape('PubSub.unsub() with no method', t => {
 	t.plan(0);
 	var ps = new pubsub();
 	var f1 = function() {
@@ -114,7 +114,7 @@ test('PubSub.unsub() with no method', t => {
 	t.end();
 });
 
-test('PubSub: namespaced events', t => {
+tape('PubSub: namespaced events', t => {
 	t.plan(2);
 	var ps = new pubsub();
 	ps.sub('namespace:topic1', function() {
@@ -133,7 +133,7 @@ test('PubSub: namespaced events', t => {
 	t.end();
 });
 
-test('PubSub: nested namespaces', t => {
+tape('PubSub: nested namespaces', t => {
 	t.plan(3);
 	var ps = new pubsub();
 	ps.sub('parent:child:event', function() {
@@ -152,7 +152,7 @@ test('PubSub: nested namespaces', t => {
 	t.end();
 });
 
-test('PubSub.recoup()', t => {
+tape('PubSub.recoup()', t => {
 	t.plan(4);
 	var ps = new pubsub();
 	ps.pub('event1', 1, 2, 3);
