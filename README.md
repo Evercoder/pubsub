@@ -52,7 +52,7 @@ Available options:
 
 **Note:** This option [will be deprecated](#strict-mode).
 
-§ bus.**once**(_event_, _listener_, _thisArg_) is a shortcut for calling `once()` with the `once: true` option.
+§ bus.**once**(_event_, _listener_, _thisArg_) is a shortcut for calling `sub()` with the `once: true` option.
 
 § bus.**unsub**(_event_, _listener_) — unsubscribe a listener from an event.
 
