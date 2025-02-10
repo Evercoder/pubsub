@@ -5,7 +5,7 @@
 	"module": "dist/pubsub.js",
 	"private": false,
 	"devDependencies": {
-		"esbuild": "^0.12.17",
+		"esbuild": "^0.25.0",
 		"esm": "^3.2.25",
 		"husky": "^0.14.3",
 		"prettier": "^1.13.7",
